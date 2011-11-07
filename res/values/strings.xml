@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Office Hours</string>
+    <string name="elapsed_time">00:00:00</string>
+    <string name="elapsed_time_label">Elapsed time</string>
+    <string name="project_label">Project</string>
+    <string name="notes_label">Notes</string>
+    <string name="timer_button_label_off">Start</string>
+    <string name="timer_button_label_on">Stop</string>
+</resources>
