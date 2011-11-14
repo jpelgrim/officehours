@@ -6,9 +6,9 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -16,54 +16,58 @@ import android.widget.ToggleButton;
 public class TimerActivity extends Activity {
 
     private static final String KEY_START_TIME = "mStartTime";
+    private static final String TAG = "OfficeHours";
     private static final String PREFS_NAME = "OfficeHours";
+    
     private long mStartTime;
-    private TextView mElapsedTime;
-    private EditText mNotesField;
-    private Spinner mProjectSpinner;
     private Handler mHandler;
-    private ToggleButton toggleTimerButton;
+    private SharedPreferences mSharedPreferences;
+    
+    private TextView mElapsedTime;
+    private Spinner mProjectSpinner;
+    private ToggleButton mToggleTimerButton;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Bekijk deze log-statements in de logcat view in Eclipse of via "<ANDROID_SDK>/platform-tools/adb logcat OfficeHours:V *:S"
+        Log.d(TAG, "onCreate"); 
         setContentView(R.layout.main);
 
-        final SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        mStartTime = sharedPreferences.getLong(KEY_START_TIME, 0L);
+        mElapsedTime = (TextView) findViewById(R.id.elapsed_time);
+        mProjectSpinner = (Spinner) findViewById(R.id.project_spinner);
 
+        mSharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        mStartTime = mSharedPreferences.getLong(KEY_START_TIME, 0L);
+        
         mHandler = new Handler();
 
-        toggleTimerButton = (ToggleButton) findViewById(R.id.timer_button);
-        toggleTimerButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+        mToggleTimerButton = (ToggleButton) findViewById(R.id.timer_button);
+        mToggleTimerButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    mNotesField.setEnabled(false);
+                    Log.d(TAG, "toggleTimerButton is checked");
                     mProjectSpinner.setEnabled(false);
-                    if (mStartTime == 0L) {
+                    if (mStartTime == 0) {
                         mStartTime = System.currentTimeMillis();
-                        Editor editor = sharedPreferences.edit();
+                        Editor editor = mSharedPreferences.edit();
                         editor.putLong(KEY_START_TIME, mStartTime);
                         editor.commit();
                     }
-                    mHandler.removeCallbacks(mUpdateTimeTask);
-                    mHandler.postDelayed(mUpdateTimeTask, 0);
+                    mHandler.removeCallbacks(mUpdateTimeTask); // Haal alle bestaande en nog wachtende messages van dit object uit de message queue
+                    mHandler.post(mUpdateTimeTask); // Voer de mUpdateTimeTask de eerste keer 'direct' uit
                 } else {
-                    mNotesField.setEnabled(true);
+                    Log.d(TAG, "toggleTimerButton is unchecked");
                     mProjectSpinner.setEnabled(true);
                     mStartTime = 0L;
-                    Editor editor = sharedPreferences.edit();
-                    editor.putLong(KEY_START_TIME, mStartTime);
+                    Editor editor = mSharedPreferences.edit();
+                    editor.remove(KEY_START_TIME);
                     editor.commit();
                     mHandler.removeCallbacks(mUpdateTimeTask);
                 }
             }
         });
 
-        mElapsedTime = (TextView) findViewById(R.id.elapsed_time);
-        
-        mNotesField = (EditText) findViewById(R.id.notes_field);
-        mProjectSpinner = (Spinner) findViewById(R.id.project_spinner);
     }
 
     private Runnable mUpdateTimeTask = new Runnable() {
@@ -90,18 +94,19 @@ public class TimerActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d(TAG, "onPause");
         mHandler.removeCallbacks(mUpdateTimeTask);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume");
         if (mStartTime > 0) {
-            toggleTimerButton.setChecked(true);
-            mNotesField.setEnabled(false);
+            mToggleTimerButton.setChecked(true);
             mProjectSpinner.setEnabled(false);
             mHandler.removeCallbacks(mUpdateTimeTask);
-            mHandler.postDelayed(mUpdateTimeTask, 0);
+            mHandler.post(mUpdateTimeTask);
         }
     }
     

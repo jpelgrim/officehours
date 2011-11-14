@@ -42,18 +42,6 @@
                 android:layout_height="wrap_content"
                 android:entries="@array/project_list" />
 
-            <TextView
-                android:id="@+id/notes_label"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/label_background"
-                android:text="@string/notes_label"
-                android:textColor="@color/label_font" />
-
-            <EditText
-                android:id="@+id/notes_field"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <ToggleButton
