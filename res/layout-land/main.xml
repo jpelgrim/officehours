@@ -22,9 +22,8 @@
                 android:id="@+id/elapsed_time"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center_vertical"
                 android:layout_weight="1"
-                android:gravity="center_horizontal"
+                android:gravity="center_vertical|center_horizontal"
                 android:text="@string/elapsed_time"
                 android:textSize="80sp" />
 
@@ -49,8 +48,10 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
+            android:background="@drawable/btn_green"
             android:textOff="@string/timer_button_label_off"
             android:textOn="@string/timer_button_label_on"
-            android:textSize="80sp" />
+            android:textSize="80sp"
+            android:textColor="@color/toggle_button_font" />
 
 </LinearLayout>
