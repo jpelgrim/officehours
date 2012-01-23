@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Office Hours</string>
+    <string name="elapsed_time">00:00:00</string>
     <string name="elapsed_time_label">Verstreken tijd</string>
-    <string name="notes_label">Notities</string>
+    <string name="project_label">Project</string>
+    <string name="timer_button_label_off">Start</string>
+    <string name="timer_button_label_on">Stop</string>
+    <string name="time_booking_label">Tijdregistraties</string>
+    <string name="time_booking_label_single">Tijdregistratie</string>
+    <string name="no_data">Geen tijdregistraties.\nStart een tijdregistratie door op de \'+\'-knop rechtsboven te klikken.</string>
+    <string name="project_name_label">Projectnaam</string>
+    <string name="plus_label">+</string>
+    <string name="start_time_label">"Starttijd: "</string>
+    <string name="hours_label">u</string>
+    <string name="minutes_label">m</string>
 </resources>

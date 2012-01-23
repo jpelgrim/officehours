@@ -21,7 +21,7 @@
             <TextView
                 android:id="@+id/elapsed_time"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical|center_horizontal"
                 android:text="@string/elapsed_time"
@@ -45,7 +45,7 @@
 
         <ToggleButton
             android:id="@+id/timer_button"
-            android:layout_width="fill_parent"
+            android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:background="@drawable/btn_green"

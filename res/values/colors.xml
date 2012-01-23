@@ -2,4 +2,5 @@
 <resources>
     <color name="label_font">#FFF</color>
     <color name="toggle_button_font">#FFF</color>
+    <color name="shadow_color">#444</color>
 </resources>

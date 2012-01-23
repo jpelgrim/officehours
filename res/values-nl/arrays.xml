@@ -7,13 +7,13 @@
         <item>The Dutch Android User Group</item>
         <item>Android Cookbook</item>
         <item>Lunch</item>
-        <item>Education</item>
-        <item>Other</item>
+        <item>Educatie</item>
+        <item>Anders</item>
     </string-array>
     
     <string-array name="timebookings_menu">
-        <item>Edit</item>
-        <item>Delete</item>
+        <item>Aanpassen</item>
+        <item>Verwijderen</item>
     </string-array>
 
 </resources>

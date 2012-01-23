@@ -1,8 +1,12 @@
 package nl.javamagazine.officehours;
 
+import static nl.javamagazine.officehours.OfficeHoursApplication.KEY_PROJECT;
+import static nl.javamagazine.officehours.OfficeHoursApplication.KEY_START_TIME;
+import static nl.javamagazine.officehours.OfficeHoursApplication.PREFS_NAME;
+import static nl.javamagazine.officehours.OfficeHoursApplication.TAG;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -15,23 +19,24 @@ import android.widget.ToggleButton;
 
 public class TimerActivity extends Activity {
 
-    private static final String KEY_START_TIME = "mStartTime";
-    private static final String TAG = "OfficeHours";
-    private static final String PREFS_NAME = "OfficeHours";
-    
     private long mStartTime;
+    private int mSelectedProject;
+
+    private int mHours;
+    private int mMinutes;
     private Handler mHandler;
     private SharedPreferences mSharedPreferences;
-    
+
     private TextView mElapsedTime;
     private Spinner mProjectSpinner;
     private ToggleButton mToggleTimerButton;
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Bekijk deze log-statements in de logcat view in Eclipse of via "<ANDROID_SDK>/platform-tools/adb logcat OfficeHours:V *:S"
-        Log.d(TAG, "onCreate"); 
+        // You can see these log statements in the logcat view in Eclipse or via
+        // "<ANDROID_SDK>/platform-tools/adb logcat OfficeHours:V *:S"
+        Log.d(TAG, "onCreate");
         setContentView(R.layout.main);
 
         mElapsedTime = (TextView) findViewById(R.id.elapsed_time);
@@ -39,7 +44,8 @@ public class TimerActivity extends Activity {
 
         mSharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         mStartTime = mSharedPreferences.getLong(KEY_START_TIME, 0L);
-        
+        mSelectedProject = mSharedPreferences.getInt(KEY_PROJECT, -1);
+
         mHandler = new Handler();
 
         mToggleTimerButton = (ToggleButton) findViewById(R.id.timer_button);
@@ -48,28 +54,35 @@ public class TimerActivity extends Activity {
                 if (isChecked) {
                     Log.d(TAG, "toggleTimerButton is checked");
                     mProjectSpinner.setEnabled(false);
-                    if (mStartTime == 0) {
+                    if (mStartTime == 0) { // Start a new timer
                         mStartTime = System.currentTimeMillis();
-                        Editor editor = mSharedPreferences.edit();
-                        editor.putLong(KEY_START_TIME, mStartTime);
-                        editor.commit();
+                        mSharedPreferences.edit().putLong(KEY_START_TIME, mStartTime).putInt(KEY_PROJECT, mProjectSpinner.getSelectedItemPosition()).commit();
                     }
-                    mHandler.removeCallbacks(mUpdateTimeTask); // Haal alle bestaande en nog wachtende messages van dit object uit de message queue
-                    mHandler.post(mUpdateTimeTask); // Voer de mUpdateTimeTask de eerste keer 'direct' uit
+
+                    // Remove already existing messages from the message queue
+                    mHandler.removeCallbacks(mUpdateTimeTask);
+
+                    // Execute the first update task without a delay
+                    mHandler.post(mUpdateTimeTask);
+
                 } else {
                     Log.d(TAG, "toggleTimerButton is unchecked");
-                    mProjectSpinner.setEnabled(true);
-                    mStartTime = 0L;
-                    Editor editor = mSharedPreferences.edit();
-                    editor.remove(KEY_START_TIME);
-                    editor.commit();
+                        OfficeHoursApplication.getDatabaseHelper().insertTimeBooking(
+                                mProjectSpinner.getSelectedItem().toString(), mStartTime, mHours, mMinutes);
+                    mSharedPreferences.edit().remove(KEY_START_TIME).remove(KEY_PROJECT).commit();
+                    
+                    // No reason to continue updating the UI, we're done
                     mHandler.removeCallbacks(mUpdateTimeTask);
+                    
+                    // We were started from the overview, so we only have to remove ourselves from the activity stack.
+                    finish();
                 }
             }
+
         });
 
     }
-
+    
     private Runnable mUpdateTimeTask = new Runnable() {
 
         public void run() {
@@ -78,14 +91,14 @@ public class TimerActivity extends Activity {
 
             final long elapsedTime = currentTimeMillis - timerStartTime;
             int seconds = (int) (elapsedTime / 1000) % 60;
-            int minutes = (int) (elapsedTime / 1000 / 60) % 60;
-            int hours = (int) (elapsedTime / 1000 / 60 / 60) % 24;
+            mMinutes = (int) (elapsedTime / 1000 / 60) % 60;
+            mHours = (int) (elapsedTime / 1000 / 60 / 60) % 24;
 
             final long uptimeMillis = SystemClock.uptimeMillis();
             final long systemStartTime = currentTimeMillis - uptimeMillis;
 
-            mElapsedTime.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
-            
+            mElapsedTime.setText(String.format("%02d:%02d:%02d", mHours, mMinutes, seconds));
+
             final long nextUpdateTime = elapsedTime - (systemStartTime - timerStartTime) + 1000;
             mHandler.postAtTime(this, nextUpdateTime);
         }
@@ -102,12 +115,15 @@ public class TimerActivity extends Activity {
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        if (mStartTime > 0) {
+        if (mStartTime > 0) { // We have an active timer
             mToggleTimerButton.setChecked(true);
+            if (mSelectedProject >= 0) {
+                mProjectSpinner.setSelection(mSelectedProject);
+            }
             mProjectSpinner.setEnabled(false);
             mHandler.removeCallbacks(mUpdateTimeTask);
             mHandler.post(mUpdateTimeTask);
         }
     }
-    
+
 }
