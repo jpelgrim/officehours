@@ -68,13 +68,13 @@ public class TimeBookingActivity extends ListActivity {
         super.onResume();
         SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         long startTime = sharedPreferences.getLong(KEY_START_TIME, 0L);
-        AnalogClock clock = (AnalogClock) findViewById(R.id.active_timer_button);
+        AnalogClock clockButton = (AnalogClock) findViewById(R.id.active_timer_button);
         TextView plusButton = (TextView) findViewById(R.id.new_timer_button);
         if (startTime > 0) { // Timer active
-            clock.setVisibility(View.VISIBLE);
+            clockButton.setVisibility(View.VISIBLE);
             plusButton.setVisibility(View.GONE);
         } else { // No timer active
-            clock.setVisibility(View.GONE);
+            clockButton.setVisibility(View.GONE);
             plusButton.setVisibility(View.VISIBLE);
         }
     }
