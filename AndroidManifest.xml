@@ -7,7 +7,6 @@
     <uses-sdk android:minSdkVersion="8" />
 
     <application
-        android:name="nl.javamagazine.officehours.OfficeHoursApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
         <activity

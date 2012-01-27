@@ -16,13 +16,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "officehours.sql";
     
+    private static final String TABLE_TIMEBOOKINGS="timebookings";
+    
+    public interface TimeBookingColumns {
+        public static final String PROJECT = "project";
+        public static final String STARTDT = "startdt";
+        public static final String HOURS = "hours";
+        public static final String MINUTES = "minutes";
+    }
+    
+    private static final String CREATE_TABLE_TIMEBOOKINGS =
+            "CREATE TABLE " + TABLE_TIMEBOOKINGS + " (" +
+            BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+            TimeBookingColumns.PROJECT + " TEXT, " +
+            TimeBookingColumns.STARTDT + " DATE, " +
+            TimeBookingColumns.HOURS + " INTEGER, " +
+            TimeBookingColumns.MINUTES + " INTEGER" + ");";
+    
     public DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(TimeBooking.TABLE_CREATE);
+        db.execSQL(CREATE_TABLE_TIMEBOOKINGS);
     }
 
     @Override
@@ -34,48 +51,48 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
         Date startDateTime = new Date(start);
         ContentValues values = new ContentValues();
-        values.put(TimeBooking.KEY_PROJECT, projectName);
-        values.put(TimeBooking.KEY_STARTDT, dateFormat.format(startDateTime));
-        values.put(TimeBooking.KEY_HOURS, hours);
-        values.put(TimeBooking.KEY_MINUTES, minutes);
-        this.getWritableDatabase().insert(TimeBooking.TABLE_NAME, TimeBooking.KEY_PROJECT, values);
+        values.put(TimeBookingColumns.PROJECT, projectName);
+        values.put(TimeBookingColumns.STARTDT, dateFormat.format(startDateTime));
+        values.put(TimeBookingColumns.HOURS, hours);
+        values.put(TimeBookingColumns.MINUTES, minutes);
+        this.getWritableDatabase().insert(TABLE_TIMEBOOKINGS, TimeBookingColumns.PROJECT, values);
     }
     
     public void updateTimeBooking(long id, int hours, int minutes) {
         ContentValues values = new ContentValues();
-        values.put(TimeBooking.KEY_HOURS, hours);
-        values.put(TimeBooking.KEY_MINUTES, minutes);
-        this.getWritableDatabase().update(TimeBooking.TABLE_NAME, values, BaseColumns._ID + "=" + id, null);
+        values.put(TimeBookingColumns.HOURS, hours);
+        values.put(TimeBookingColumns.MINUTES, minutes);
+        this.getWritableDatabase().update(TABLE_TIMEBOOKINGS, values, BaseColumns._ID + "=" + id, null);
     }
     
     public Cursor getTimeBookings() {
         return this.getReadableDatabase().query(
-                TimeBooking.TABLE_NAME, 
-                new String[] {BaseColumns._ID, TimeBooking.KEY_PROJECT, TimeBooking.KEY_STARTDT, TimeBooking.KEY_HOURS, TimeBooking.KEY_MINUTES} , 
-                null, null, null, null, TimeBooking.KEY_STARTDT + " desc");
+                TABLE_TIMEBOOKINGS, 
+                new String[] {BaseColumns._ID, TimeBookingColumns.PROJECT, TimeBookingColumns.STARTDT, TimeBookingColumns.HOURS, TimeBookingColumns.MINUTES} , 
+                null, null, null, null, TimeBookingColumns.STARTDT + " desc");
     }
 
     public TimeBooking getTimeBooking(long id) throws ParseException {
         Cursor cursor = this.getReadableDatabase().query(
-                TimeBooking.TABLE_NAME, 
-                new String[] {BaseColumns._ID, TimeBooking.KEY_PROJECT, TimeBooking.KEY_STARTDT, TimeBooking.KEY_HOURS, TimeBooking.KEY_MINUTES} , 
+                TABLE_TIMEBOOKINGS, 
+                new String[] {BaseColumns._ID, TimeBookingColumns.PROJECT, TimeBookingColumns.STARTDT, TimeBookingColumns.HOURS, TimeBookingColumns.MINUTES} , 
                 BaseColumns._ID + "=" + id, null, null, null, null);
         if (cursor != null) {
             cursor.moveToFirst();
             TimeBooking timeBooking = new TimeBooking();
-            timeBooking.setProject(cursor.getString(cursor.getColumnIndexOrThrow(TimeBooking.KEY_PROJECT)));
-            String dateTimeString = cursor.getString(cursor.getColumnIndexOrThrow(TimeBooking.KEY_STARTDT));
+            timeBooking.setProject(cursor.getString(cursor.getColumnIndexOrThrow(TimeBookingColumns.PROJECT)));
+            String dateTimeString = cursor.getString(cursor.getColumnIndexOrThrow(TimeBookingColumns.STARTDT));
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
             timeBooking.setStartDateTime(dateFormat.parse(dateTimeString));
-            timeBooking.setHours(cursor.getInt(cursor.getColumnIndexOrThrow(TimeBooking.KEY_HOURS)));
-            timeBooking.setMinutes(cursor.getInt(cursor.getColumnIndexOrThrow(TimeBooking.KEY_MINUTES)));
+            timeBooking.setHours(cursor.getInt(cursor.getColumnIndexOrThrow(TimeBookingColumns.HOURS)));
+            timeBooking.setMinutes(cursor.getInt(cursor.getColumnIndexOrThrow(TimeBookingColumns.MINUTES)));
             return timeBooking;
         }
         return null;
     }
 
     public void deleteTimeBooking(long id) {
-        this.getWritableDatabase().delete(TimeBooking.TABLE_NAME, BaseColumns._ID + "=" + id, null);
+        this.getWritableDatabase().delete(TABLE_TIMEBOOKINGS, BaseColumns._ID + "=" + id, null);
     }
 
 }

@@ -1,11 +1,11 @@
 package nl.javamagazine.officehours;
 
-import static nl.javamagazine.officehours.OfficeHoursApplication.KEY_START_TIME;
-import static nl.javamagazine.officehours.OfficeHoursApplication.PREFS_NAME;
-import static nl.javamagazine.officehours.OfficeHoursApplication.TAG;
+import static nl.javamagazine.officehours.ApplicationConstants.KEY_START_TIME;
+import static nl.javamagazine.officehours.ApplicationConstants.PREFS_NAME;
 
 import java.text.ParseException;
 
+import nl.javamagazine.officehours.DatabaseHelper.TimeBookingColumns;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.TimePickerDialog;
@@ -28,24 +28,31 @@ import android.widget.TimePicker;
 
 public class TimeBookingActivity extends ListActivity {
 
-    static final int TIME_DIALOG_ID = 0;
+    /*
+     * Log tag used for filtering in LogCat
+     */
+    public static final String TAG = "TimeBookingActivity";
+
+    private static final int TIME_DIALOG_ID = 0;
     private long mId;
     private SimpleCursorAdapter mAdapter;
     private Cursor mCursor;
-
+    private DatabaseHelper mDatabaseHelper;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mDatabaseHelper = new DatabaseHelper(this);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.timebooking);
 
         registerForContextMenu(getListView());
 
-        mCursor = OfficeHoursApplication.getDatabaseHelper().getTimeBookings();
+        mCursor = mDatabaseHelper.getTimeBookings();
         startManagingCursor(mCursor);
 
-        String[] from = new String[] { TimeBooking.KEY_PROJECT, TimeBooking.KEY_STARTDT, TimeBooking.KEY_HOURS,
-                TimeBooking.KEY_MINUTES };
+        String[] from = new String[] { TimeBookingColumns.PROJECT, TimeBookingColumns.STARTDT, TimeBookingColumns.HOURS,
+                TimeBookingColumns.MINUTES };
 
         int[] to = new int[] { R.id.project_name_list_item, R.id.startdt_list_item, R.id.hours_list_item,
                 R.id.minutes_list_item };
@@ -71,6 +78,14 @@ public class TimeBookingActivity extends ListActivity {
             plusButton.setVisibility(View.VISIBLE);
         }
     }
+    
+    @Override
+    protected void onDestroy() {
+        if (mDatabaseHelper != null) {
+            mDatabaseHelper.close();
+        }
+        super.onDestroy();
+    }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -80,7 +95,7 @@ public class TimeBookingActivity extends ListActivity {
             String title = this.getString(R.string.time_booking_label_single);
 
             try {
-                TimeBooking timeBooking = OfficeHoursApplication.getDatabaseHelper().getTimeBooking(info.id);
+                TimeBooking timeBooking = mDatabaseHelper.getTimeBooking(info.id);
                 if (timeBooking != null) {
                     title += String.format(" (%dh%dm)", timeBooking.getHours(), timeBooking.getMinutes());
                 }
@@ -102,21 +117,18 @@ public class TimeBookingActivity extends ListActivity {
         int menuItemIndex = item.getItemId();
         if (menuItemIndex == 0) { // Edit
             mId = info.id;
-            removeDialog(TIME_DIALOG_ID); // Make sure the dialog is not reused.
+            removeDialog(TIME_DIALOG_ID); // Make sure the dialog is not reused. Otherwise the time from another entry is shown.
             showDialog(TIME_DIALOG_ID);
         }
         if (menuItemIndex == 1) { // Delete
-            OfficeHoursApplication.getDatabaseHelper().deleteTimeBooking(info.id);
+            mDatabaseHelper.deleteTimeBooking(info.id);
             refreshListView();
         }
         return true;
     }
 
     private void refreshListView() {
-        if (mCursor != null) {
-            stopManagingCursor(mCursor);
-        }
-        mCursor = OfficeHoursApplication.getDatabaseHelper().getTimeBookings();
+        mCursor = mDatabaseHelper.getTimeBookings();
         startManagingCursor(mCursor);
         mAdapter.changeCursor(mCursor);
     }
@@ -129,7 +141,7 @@ public class TimeBookingActivity extends ListActivity {
     // the callback received when the user "sets" the time in the dialog
     private TimePickerDialog.OnTimeSetListener mTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
         public void onTimeSet(TimePicker view, int hours, int minutes) {
-            OfficeHoursApplication.getDatabaseHelper().updateTimeBooking(mId, hours, minutes);
+            mDatabaseHelper.updateTimeBooking(mId, hours, minutes);
             refreshListView();
         }
     };
@@ -140,7 +152,7 @@ public class TimeBookingActivity extends ListActivity {
         case TIME_DIALOG_ID:
             TimeBooking timeBooking;
             try {
-                timeBooking = OfficeHoursApplication.getDatabaseHelper().getTimeBooking(mId);
+                timeBooking = mDatabaseHelper.getTimeBooking(mId);
                 if (timeBooking != null) {
                     return new TimePickerDialog(this, mTimeSetListener, timeBooking.getHours(),
                             timeBooking.getMinutes(), true);

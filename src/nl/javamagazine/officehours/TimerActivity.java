@@ -1,11 +1,9 @@
 package nl.javamagazine.officehours;
 
-import static nl.javamagazine.officehours.OfficeHoursApplication.KEY_PROJECT;
-import static nl.javamagazine.officehours.OfficeHoursApplication.KEY_START_TIME;
-import static nl.javamagazine.officehours.OfficeHoursApplication.PREFS_NAME;
-import static nl.javamagazine.officehours.OfficeHoursApplication.TAG;
+import static nl.javamagazine.officehours.ApplicationConstants.KEY_PROJECT;
+import static nl.javamagazine.officehours.ApplicationConstants.KEY_START_TIME;
+import static nl.javamagazine.officehours.ApplicationConstants.PREFS_NAME;
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,6 +17,11 @@ import android.widget.ToggleButton;
 
 public class TimerActivity extends Activity {
 
+    /*
+     * Log tag used for filtering in LogCat
+     */
+    public static final String TAG = "TimerActivity";
+
     private long mStartTime;
     private int mSelectedProject;
 
@@ -30,10 +33,13 @@ public class TimerActivity extends Activity {
     private TextView mElapsedTime;
     private Spinner mProjectSpinner;
     private ToggleButton mToggleTimerButton;
+    
+    private DatabaseHelper mDatabaseHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mDatabaseHelper = new DatabaseHelper(this);
         // You can see these log statements in the logcat view in Eclipse or via
         // "<ANDROID_SDK>/platform-tools/adb logcat OfficeHours:V *:S"
         Log.d(TAG, "onCreate");
@@ -67,14 +73,14 @@ public class TimerActivity extends Activity {
 
                 } else {
                     Log.d(TAG, "toggleTimerButton is unchecked");
-                        OfficeHoursApplication.getDatabaseHelper().insertTimeBooking(
+                    mDatabaseHelper.insertTimeBooking(
                                 mProjectSpinner.getSelectedItem().toString(), mStartTime, mHours, mMinutes);
                     mSharedPreferences.edit().remove(KEY_START_TIME).remove(KEY_PROJECT).commit();
                     
                     // No reason to continue updating the UI, we're done
                     mHandler.removeCallbacks(mUpdateTimeTask);
                     
-                    // We were started from the overview, so we only have to remove ourselves from the activity stack.
+                    // We were started from the TimeBookingActivity, so we only have to remove ourselves from the Back Stack.
                     finish();
                 }
             }
@@ -103,7 +109,15 @@ public class TimerActivity extends Activity {
             mHandler.postAtTime(this, nextUpdateTime);
         }
     };
-
+    
+    @Override
+    protected void onDestroy() {
+        if (mDatabaseHelper != null) {
+            mDatabaseHelper.close();
+        }
+        super.onDestroy();
+    }
+    
     @Override
     protected void onPause() {
         super.onPause();

@@ -3,11 +3,11 @@
 
     <string-array name="project_list">
         <item>Java Magazine - Office Hours</item>
-        <item>droidconNL</item>
         <item>The Dutch Android User Group</item>
-        <item>Android Cookbook</item>
+        <item>LBSOVI</item>
         <item>Lunch</item>
         <item>Education</item>
+        <item>Commute</item>
         <item>Other</item>
     </string-array>
     

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="45sp" 
+    android:layout_height="48sp" 
     android:background="@drawable/timebooking_list_item"
     >
 
@@ -14,7 +14,7 @@
         android:paddingTop="2dp"
         android:paddingLeft="5dp"
         android:text="@string/project_name_label"
-        android:textSize="15sp"
+        android:textSize="16sp"
         android:textColor="@color/label_font"
         android:layout_alignParentTop="true" 
         />
@@ -37,7 +37,7 @@
         android:paddingTop="2sp"
         android:paddingLeft="5sp"
         android:paddingBottom="2sp"
-        android:textSize="15sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="@color/label_font"
         android:shadowColor="@color/shadow_color"
@@ -62,7 +62,7 @@
         android:id="@+id/minutes_list_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="15sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="@color/label_font"
         android:shadowColor="@color/shadow_color"
