@@ -4,6 +4,26 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/title_header"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:paddingLeft="4dp"
+            android:text="@string/app_name"
+            android:textColor="@color/label_font"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+    
     <TextView
         android:id="@+id/elapsed_time_label"
         android:layout_width="fill_parent"

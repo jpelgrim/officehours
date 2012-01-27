@@ -8,7 +8,7 @@
     <string name="timer_button_label_on">Stop</string>
     <string name="time_booking_label">Time Bookings</string>
     <string name="time_booking_label_single">Time Booking</string>
-    <string name="no_data">No time bookings.\nPlease start a timer using the \'+\' button on the top right.</string>
+    <string name="no_data">No time bookings have been recorded.\n\nPlease start a timer using the plus button on the top right.</string>
     <string name="project_name_label">Project name</string>
     <string name="plus_label">+</string>
     <string name="start_time_label">"Start time: "</string>

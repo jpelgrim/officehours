@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.Window;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Spinner;
@@ -40,6 +41,7 @@ public class TimerActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDatabaseHelper = new DatabaseHelper(this);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         // You can see these log statements in the logcat view in Eclipse or via
         // "<ANDROID_SDK>/platform-tools/adb logcat OfficeHours:V *:S"
         Log.d(TAG, "onCreate");

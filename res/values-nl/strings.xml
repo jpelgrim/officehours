@@ -8,7 +8,7 @@
     <string name="timer_button_label_on">Stop</string>
     <string name="time_booking_label">Tijdregistraties</string>
     <string name="time_booking_label_single">Tijdregistratie</string>
-    <string name="no_data">Geen tijdregistraties.\nStart een tijdregistratie door op de \'+\'-knop rechtsboven te klikken.</string>
+    <string name="no_data">Er zijn geen tijdregistraties opgeslagen.\n\nStart een tijdregistratie door op de plus-knop rechtsboven te drukken.</string>
     <string name="project_name_label">Projectnaam</string>
     <string name="plus_label">+</string>
     <string name="start_time_label">"Starttijd: "</string>
