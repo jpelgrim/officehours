@@ -97,7 +97,7 @@ public class TimeBookingActivity extends ListActivity {
             try {
                 TimeBooking timeBooking = mDatabaseHelper.getTimeBooking(info.id);
                 if (timeBooking != null) {
-                    title += String.format(" (%dh%dm)", timeBooking.getHours(), timeBooking.getMinutes());
+                    title = String.format("%s (%dh%dm)", timeBooking.getProject(), timeBooking.getHours(), timeBooking.getMinutes());
                 }
             } catch (ParseException e) {
                 Log.d(TAG, "Could not parse date for time booking with id " + info.id);

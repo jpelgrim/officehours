@@ -2,13 +2,7 @@
 <resources>
 
     <string-array name="project_list">
-        <item>Java Magazine - Office Hours</item>
-        <item>The Dutch Android User Group</item>
-        <item>LBSOVI</item>
-        <item>Lunch</item>
-        <item>Education</item>
-        <item>Commute</item>
-        <item>Other</item>
+        <item>Your Own Project</item>
     </string-array>
     
     <string-array name="timebookings_menu">
