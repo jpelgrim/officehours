@@ -66,10 +66,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
     
     public Cursor getTimeBookings() {
-        return this.getReadableDatabase().query(
+        Cursor cursor = this.getReadableDatabase().query(
                 TABLE_TIMEBOOKINGS, 
                 new String[] {BaseColumns._ID, TimeBookingColumns.PROJECT, TimeBookingColumns.STARTDT, TimeBookingColumns.HOURS, TimeBookingColumns.MINUTES} , 
                 null, null, null, null, TimeBookingColumns.STARTDT + " desc");
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        return cursor;
     }
 
     public TimeBooking getTimeBooking(long id) throws ParseException {

@@ -2,9 +2,9 @@
 <resources>
 
     <string-array name="project_list">
-        <item>Your Own Project</item>
+        <item>Put your own projects here...</item>
     </string-array>
-    
+
     <string-array name="timebookings_menu">
         <item>Edit</item>
         <item>Delete</item>

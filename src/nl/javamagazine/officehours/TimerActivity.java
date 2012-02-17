@@ -100,7 +100,7 @@ public class TimerActivity extends Activity {
             final long elapsedTime = currentTimeMillis - timerStartTime;
             int seconds = (int) (elapsedTime / 1000) % 60;
             mMinutes = (int) (elapsedTime / 1000 / 60) % 60;
-            mHours = (int) (elapsedTime / 1000 / 60 / 60) % 24;
+            mHours = (int) (elapsedTime / 1000 / 60 / 60);
 
             final long uptimeMillis = SystemClock.uptimeMillis();
             final long systemStartTime = currentTimeMillis - uptimeMillis;

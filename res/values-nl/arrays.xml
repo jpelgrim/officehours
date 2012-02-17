@@ -2,7 +2,7 @@
 <resources>
 
     <string-array name="project_list">
-        <item>Je Eigen Project</item>
+        <item>Plaats hier je eigen projecten...</item>
     </string-array>
     
     <string-array name="timebookings_menu">
